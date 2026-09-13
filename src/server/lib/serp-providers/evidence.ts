@@ -14,7 +14,7 @@ export interface RawEvidenceStore {
   }): Promise<RawEvidence>;
 }
 
-export type EvidenceFamily = "SERP" | "KEYWORD_METRIC" | "BUYER_LANGUAGE" | "COMPETITOR";
+export type EvidenceFamily = "SERP" | "KEYWORD_METRIC" | "BUYER_LANGUAGE" | "COMPETITOR" | "MARKET";
 export type ImmutableEvidenceArtifact = RawEvidence & { family: EvidenceFamily; contentType: string };
 export type ImmutableEvidenceInput = { family: EvidenceFamily; provider: string; requestMetadata: Record<string, unknown>; capturedAt: string; status: number; bytes: Uint8Array; providerVersion: string | null; adapterVersion: string; contentType?: string };
 export interface ImmutableEvidenceStore { captureArtifact(input: ImmutableEvidenceInput): Promise<ImmutableEvidenceArtifact>; }
@@ -31,7 +31,9 @@ function safeRequestMetadata(family: EvidenceFamily, metadata: Record<string, un
       ? ["queries", "market", "language", "requestFamily", "locationCode", "locationName", "languageCode"]
       : family === "BUYER_LANGUAGE"
         ? ["sourceClass", "sourceId", "sourceUrl", "claimKey"]
-        : ["sourceClass", "sourceId", "sourceUrl", "competitorDomain", "claimKind", "claimKey"];
+        : family === "COMPETITOR"
+          ? ["sourceClass", "sourceId", "sourceUrl", "competitorDomain", "claimKind", "claimKey"]
+          : ["sourceClass", "sourceId", "sourceUrl", "sourceDomain", "claimKind", "claimKey", "targetGeography", "observedGeography"];
   return Object.fromEntries(allowed.filter((key) => metadata[key] !== undefined).map((key) => [key, metadata[key]]));
 }
 
