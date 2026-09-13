@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { OpenSerpAdapter, openSerpCapabilities } from "@/server/lib/serp-providers/openserp";
+import { isEligibleForTargetDomainMatch, normalizeDirectDestination, OpenSerpAdapter, openSerpCapabilities, openSerpDeviceSemantics } from "@/server/lib/serp-providers/openserp";
 import type { RawEvidenceStore } from "@/server/lib/serp-providers/evidence";
 import type { SerpRequest } from "@/server/lib/serp-providers/types";
 
@@ -26,7 +26,26 @@ describe("OpenSerpAdapter", () => {
 
   it("preserves redirect-wrapper evidence but makes its destination identity unusable", async () => {
     const result = await adapter().acquire(request);
-    expect(result.organicResults[0]).toMatchObject({ organicRank: 1, absolutePosition: 3, url: null, domain: null, destinationUrlUsable: false, destinationDomainUsable: false });
+    expect(result.organicResults[0]).toMatchObject({ organicRank: 1, absolutePosition: 3, url: null, domain: null, destinationIdentity: "WRAPPER_ONLY", destinationUrlUsable: false, destinationDomainUsable: false });
+    expect(isEligibleForTargetDomainMatch(result.organicResults[0])).toBe(false);
+  });
+
+  it("does not decode a recoverable-looking or malformed Google wrapper", async () => {
+    const wrappers = ["https://www.google.com/goto?url=https%3A%2F%2Fevil.example%2F", "https://www.google.com/goto?url=%ZZ"];
+    for (const url of wrappers) {
+      const body = JSON.stringify({ meta: { requested_at: "2026-09-13T15:12:22Z" }, results: [{ rank: 1, type: "organic", url, domain: "google.com" }] });
+      const result = await adapter(body).acquire(request);
+      expect(result.organicResults[0]).toMatchObject({ url: null, domain: null, destinationIdentity: "WRAPPER_ONLY", destinationUrlUsable: false });
+    }
+  });
+
+  it("normalizes a direct canonical HTTP(S) URL and only that identity can match", async () => {
+    const direct = normalizeDirectDestination("HTTPS://WWW.Example.COM./path?q=1#fragment");
+    expect(direct).toEqual({ url: "https://www.example.com/path?q=1", domain: "www.example.com" });
+    const result = await adapter().acquire(request);
+    expect(result.organicResults[1]).toMatchObject({ url: "https://example.com/", domain: "example.com", destinationIdentity: "VERIFIED_DESTINATION" });
+    expect(isEligibleForTargetDomainMatch(result.organicResults[1])).toBe(true);
+    expect(normalizeDirectDestination("javascript:alert(1)")).toBeNull();
   });
 
   it("rejects a device-specific request instead of mislabeling results", async () => {
@@ -39,5 +58,6 @@ describe("OpenSerpAdapter", () => {
 
   it("advertises the verified OpenSERP limitations", () => {
     expect(openSerpCapabilities).toMatchObject({ organicSerp: "VERIFIED", desktop: "UNSUPPORTED", mobile: "UNSUPPORTED", destinationDomain: "PARTIAL", paa: "UNVERIFIED" });
+    expect(openSerpDeviceSemantics).toBe("NO_CONFIRMED_MOBILE_PROFILE");
   });
 });

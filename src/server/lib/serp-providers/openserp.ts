@@ -8,7 +8,9 @@ import {
   type SerpRequest,
 } from "@/server/lib/serp-providers/types";
 
-export const OPENSERP_ADAPTER_VERSION = "phase-1.8";
+export const OPENSERP_ADAPTER_VERSION = "phase-1.9";
+/** OpenSERP has browser-level plumbing but no safe request-level device contract. */
+export const openSerpDeviceSemantics = "NO_CONFIRMED_MOBILE_PROFILE" as const;
 export const openSerpCapabilities: SerpProviderCapabilities = {
   organicSerp: "VERIFIED", localizedSerp: "PARTIAL", desktop: "UNSUPPORTED",
   mobile: "UNSUPPORTED", destinationUrl: "PARTIAL", destinationDomain: "PARTIAL",
@@ -23,9 +25,29 @@ const envelopeSchema = z.object({
 });
 
 function isGoogleRedirect(url: string | undefined, domain: string | undefined): boolean {
-  if (!url) return false;
-  try { const parsed = new URL(url); return parsed.hostname === "www.google.com" && parsed.pathname === "/goto" || domain === "google.com"; }
-  catch { return domain === "google.com"; }
+  if (!url) return domain?.toLowerCase() === "google.com";
+  try {
+    const parsed = new URL(url);
+    return (parsed.hostname.toLowerCase() === "www.google.com" && parsed.pathname === "/goto") || domain?.toLowerCase() === "google.com";
+  } catch { return domain?.toLowerCase() === "google.com"; }
+}
+
+export function normalizeDirectDestination(url: string | undefined): { url: string; domain: string } | null {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
+    parsed.hash = "";
+    const domain = parsed.hostname.toLowerCase().replace(/\.$/, "");
+    if (!domain) return null;
+    parsed.hostname = domain;
+    return { url: parsed.toString(), domain };
+  } catch { return null; }
+}
+
+/** Only direct, normalized provider URLs may participate in target-domain matching. */
+export function isEligibleForTargetDomainMatch(result: Pick<SerpObservation["organicResults"][number], "destinationIdentity" | "destinationDomainUsable">): boolean {
+  return result.destinationIdentity === "VERIFIED_DESTINATION" && result.destinationDomainUsable;
 }
 
 export class OpenSerpAdapter implements SerpProvider {
@@ -55,7 +77,14 @@ export class OpenSerpAdapter implements SerpProvider {
       capturedAt: parsed.meta.requested_at, request, deviceKnown: false, localizationFidelity: "PARTIAL", evidence,
       organicResults: organic.map((r) => {
         const unsafe = isGoogleRedirect(r.url, r.domain);
-        return { organicRank: r.rank, absolutePosition: r.position?.absolute ?? null, title: r.title ?? null, url: unsafe ? null : r.url ?? null, domain: unsafe ? null : r.domain ?? null, snippet: r.snippet ?? null, resultType: "organic", destinationUrlUsable: !unsafe && Boolean(r.url), destinationDomainUsable: !unsafe && Boolean(r.domain) };
+        const destination = unsafe ? null : normalizeDirectDestination(r.url);
+        return {
+          organicRank: r.rank, absolutePosition: r.position?.absolute ?? null,
+          title: r.title ?? null, url: destination?.url ?? null, domain: destination?.domain ?? null,
+          snippet: r.snippet ?? null, resultType: "organic",
+          destinationIdentity: unsafe ? "WRAPPER_ONLY" : destination ? "VERIFIED_DESTINATION" : "UNVERIFIED_DESTINATION",
+          destinationUrlUsable: Boolean(destination), destinationDomainUsable: Boolean(destination),
+        };
       }),
       features: parsed.serp_features?.map((f) => f.type) ?? [],
       pagination: { page: parsed.pagination?.page ?? null, hasMore: parsed.pagination?.has_more ?? null, nextStart: parsed.pagination?.next_start ?? null },

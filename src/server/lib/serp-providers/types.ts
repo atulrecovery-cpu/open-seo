@@ -60,6 +60,11 @@ export type OrganicSerpResult = {
   domain: string | null;
   snippet: string | null;
   resultType: "organic";
+  /**
+   * `VERIFIED_DESTINATION` means the provider supplied a direct canonical HTTP(S)
+   * URL. Wrapper and inferred candidates must never receive this state.
+   */
+  destinationIdentity: "VERIFIED_DESTINATION" | "WRAPPER_ONLY" | "UNVERIFIED_DESTINATION";
   destinationUrlUsable: boolean;
   destinationDomainUsable: boolean;
 };
