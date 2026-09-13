@@ -18,4 +18,4 @@ No wrapper candidate is decoded, inferred, fetched, or promoted to `VERIFIED_DES
 
 ## Decision
 
-**D1 — OpenSERP Google wrapper destinations are not recoverable from the validated evidence without fetching.** Destination URL/domain matching is allowed only for direct canonical HTTP(S) hrefs. Wrapper-only records remain available through their raw evidence artifact for audit, but cannot enter rank matching.
+**D3 — OpenSERP Google wrapper destinations are not safely recoverable from the validated evidence without external redirect resolution.** Destination URL/domain matching is allowed only for direct canonical HTTP(S) hrefs. Wrapper-only records remain available through their raw evidence artifact for audit, but cannot enter rank matching.

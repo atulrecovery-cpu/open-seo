@@ -6,7 +6,7 @@ No new upstream OpenSERP search request was executed. This phase used the alread
 
 ## Decisions
 
-- **Destination: D1.** Google `/goto` wrapper results cannot yield verified destination URL/domain under the available evidence. Direct provider HTTP(S) hrefs are normalized deterministically; wrapper, malformed, and non-HTTP(S) records are unusable for matching.
+- **Destination: D3.** Google `/goto` wrapper results cannot yield verified destination URL/domain under the available evidence without external redirect resolution. Direct provider HTTP(S) hrefs are normalized deterministically; wrapper, malformed, and non-HTTP(S) records are unusable for matching.
 - **Device: V3.** The default profile catalog has no confirmed mobile profile, and the API has no per-request device contract or response echo. Device-specific requests remain rejected.
 
 ## Gates
