@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "seo-intelligence-v1",
+  "type": "object",
+  "required": ["schema_version", "intelligence_version", "generated_at", "source_observation_ids", "configuration_version", "observed", "derived", "model_inferred", "unknowns", "contradictions", "next_validation_actions"],
+  "properties": {
+    "schema_version": {"const": "seo-intelligence-v1"}, "intelligence_version": {"type": "string"}, "generated_at": {"type": "string"}, "source_observation_ids": {"type": "array", "items": {"type": "string"}}, "configuration_version": {"type": "string"},
+    "observed": {"type": "object", "required": ["query", "signals", "competitors"]},
+    "derived": {"type": "object", "required": ["demand", "intent", "commercialSignals", "problemSignals", "jtbd", "opportunity"]},
+    "model_inferred": {"type": "array"}, "unknowns": {"type": "array"}, "contradictions": {"type": "array"}, "next_validation_actions": {"type": "array"}
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": "seo-intelligence-v1",
+  "intelligence_version": "phase-2.0",
+  "generated_at": "2026-09-13T00:00:00.000Z",
+  "source_observation_ids": ["case-a"],
+  "configuration_version": "phase-2-fixtures-v1",
+  "observed": {"query": {"id": "case-a", "originalQuery": "best accounting software for small business", "normalizedQuery": "best accounting software for small business", "sourceType": "organic_serp", "sourceProvider": "fixture", "engine": "google", "language": "en", "region": "US", "capturedAt": "2026-09-13T00:00:00.000Z", "evidence": {"id": "evidence-case-a", "category": "SEARCH_OBSERVED", "sourceObservationId": "case-a", "captureId": "capture-case-a"}}, "signals": [{"type": "OBSERVED_ORGANIC_SERP_QUERY", "evidence": {"id": "evidence-case-a", "category": "SEARCH_OBSERVED", "sourceObservationId": "case-a", "captureId": "capture-case-a"}}], "competitors": [{"type": "SERP_COMPETITOR", "domain": "example.com", "url": "https://example.com/pricing", "queryId": "query_placeholder", "organicPosition": 1, "title": "Example", "snippet": null, "evidence": {"id": "evidence-case-a", "category": "SEARCH_OBSERVED", "sourceObservationId": "case-a", "captureId": "capture-case-a"}}]},
+  "derived": {"demand": "INDICATED", "intent": {"intent": "commercial_investigation", "confidence": 0.7, "basis": ["comparison term"], "evidenceRefs": ["evidence-case-a"], "category": "DERIVED"}, "commercialSignals": [{"type": "comparison", "matchedBasis": "comparison term", "confidence": 0.65, "source": "DETERMINISTIC", "evidence": {"id": "evidence-case-a", "category": "SEARCH_OBSERVED", "sourceObservationId": "case-a", "captureId": "capture-case-a"}}], "problemSignals": [], "jtbd": {"actor": null, "task": null, "desiredOutcome": null, "constraint": null, "basis": "INFERRED", "evidenceRefs": ["evidence-case-a"]}, "opportunity": {"id": "opportunity_query_placeholder", "demandState": "INDICATED", "confidence": "EMERGING", "note": "Structured research candidate, not a confirmed business opportunity."}},
+  "model_inferred": [],
+  "unknowns": [{"topic": "search_demand", "reason": "No verified provider metric supports demand.", "evidenceRefs": ["evidence-case-a"]}],
+  "contradictions": [],
+  "next_validation_actions": [{"type": "OBTAIN_KEYWORD_METRIC", "reason": "Demand is not supported by a verified provider metric.", "evidenceRefs": ["evidence-case-a"]}]
+}
