@@ -14,7 +14,7 @@ export interface RawEvidenceStore {
   }): Promise<RawEvidence>;
 }
 
-export type EvidenceFamily = "SERP" | "KEYWORD_METRIC";
+export type EvidenceFamily = "SERP" | "KEYWORD_METRIC" | "BUYER_LANGUAGE";
 export type ImmutableEvidenceArtifact = RawEvidence & { family: EvidenceFamily; contentType: string };
 export type ImmutableEvidenceInput = { family: EvidenceFamily; provider: string; requestMetadata: Record<string, unknown>; capturedAt: string; status: number; bytes: Uint8Array; providerVersion: string | null; adapterVersion: string; contentType?: string };
 export interface ImmutableEvidenceStore { captureArtifact(input: ImmutableEvidenceInput): Promise<ImmutableEvidenceArtifact>; }
@@ -25,7 +25,11 @@ async function sha256(bytes: Uint8Array): Promise<string> {
 }
 
 function safeRequestMetadata(family: EvidenceFamily, metadata: Record<string, unknown>): Record<string, unknown> {
-  const allowed = family === "SERP" ? ["query", "engine", "language", "region", "device", "start", "limit"] : ["queries", "market", "language", "requestFamily", "locationCode", "locationName", "languageCode"];
+  const allowed = family === "SERP"
+    ? ["query", "engine", "language", "region", "device", "start", "limit"]
+    : family === "KEYWORD_METRIC"
+      ? ["queries", "market", "language", "requestFamily", "locationCode", "locationName", "languageCode"]
+      : ["sourceClass", "sourceId", "sourceUrl", "claimKey"];
   return Object.fromEntries(allowed.filter((key) => metadata[key] !== undefined).map((key) => [key, metadata[key]]));
 }
 
@@ -37,7 +41,7 @@ export function createR2RawEvidenceStore(bucket: R2Bucket): RawEvidenceStore & I
       const existing = await bucket.head(ref);
       if (!existing) {
         await bucket.put(ref, input.bytes, {
-          httpMetadata: { contentType: "application/json" },
+          httpMetadata: { contentType: input.contentType ?? "application/json" },
           customMetadata: {
             adapterVersion: input.adapterVersion,
             capturedAt: input.capturedAt,
