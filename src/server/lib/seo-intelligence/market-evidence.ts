@@ -3,15 +3,16 @@ import type { ImmutableEvidenceStore } from "@/server/lib/serp-providers/evidenc
 
 export type MarketClaimKind = "MARKET_PRESENCE" | "CATEGORY_ACTIVITY" | "COMMERCIAL_AVAILABILITY" | "GEOGRAPHIC_PRESENCE" | "MARKET_CONSTRAINT";
 export type MarketSourceClass = "PUBLIC_REGISTRY" | "MARKETPLACE_LISTING" | "INDUSTRY_PUBLICATION" | "SUPPLIER_DIRECTORY" | "OFFICIAL_COMMERCIAL_PAGE" | "UNTRACEABLE" | "MODEL_INFERRED";
+type AcceptedMarketSourceClass = Extract<MarketSourceClass, "PUBLIC_REGISTRY" | "MARKETPLACE_LISTING" | "INDUSTRY_PUBLICATION" | "SUPPLIER_DIRECTORY" | "OFFICIAL_COMMERCIAL_PAGE">;
 export type MarketStance = "SUPPORTS" | "CONTRADICTS";
 export type MarketRawSource = { sourceClass: MarketSourceClass; sourceId: string | null; sourceUrl: string | null; sourceDomain: string | null; capturedAt: string; provider: string; targetGeography: string; observedGeography: string; claimKind: MarketClaimKind; claimKey: string; text: string; normalizedValue?: string | null; stance: MarketStance };
-export type MarketObservation = { id: string; family: "MARKET"; claimKind: MarketClaimKind; normalizedPropositionId: string; targetGeography: string; sourceClass: Extract<MarketSourceClass, "PUBLIC_REGISTRY" | "MARKETPLACE_LISTING" | "INDUSTRY_PUBLICATION" | "SUPPLIER_DIRECTORY" | "OFFICIAL_COMMERCIAL_PAGE">; observedText: string; normalizedValue: string | null; sourceUrl: string; sourceDomain: string; capturedAt: string; status: "OBSERVED"; category: Extract<EvidenceCategory, "SITE_OBSERVED">; evidenceFunction: "MARKET_CONTEXT"; stance: MarketStance; evidence: { family: "MARKET"; rawArtifactRef: string; sha256: string; captureId: string; sourceObservationId: string }; limits: "OBSERVED_MARKET_CLAIM_ONLY" };
+export type MarketObservation = { id: string; family: "MARKET"; claimKind: MarketClaimKind; normalizedPropositionId: string; targetGeography: string; sourceClass: AcceptedMarketSourceClass; observedText: string; normalizedValue: string | null; sourceUrl: string; sourceDomain: string; capturedAt: string; status: "OBSERVED"; category: Extract<EvidenceCategory, "SITE_OBSERVED">; evidenceFunction: "MARKET_CONTEXT"; stance: MarketStance; evidence: { family: "MARKET"; rawArtifactRef: string; sha256: string; captureId: string; sourceObservationId: string }; limits: "OBSERVED_MARKET_CLAIM_ONLY" };
 export type MarketUnknown = { topic: "MARKET_EVIDENCE"; reason: "SOURCE_REJECTED" | "INSUFFICIENT_PROVENANCE" | "GEOGRAPHY_MISMATCH"; sourceId: string | null; nextAction: "COLLECT_MARKET_EVIDENCE" };
 export type MarketContradiction = { propositionId: string; supportingObservationIds: string[]; conflictingObservationIds: string[]; status: "OPEN"; nextAction: "COLLECT_MARKET_EVIDENCE" };
 export type MarketAdmission = { sourceId: string | null; outcome: "ACCEPTED" | "REJECTED" | "UNKNOWN_INSUFFICIENT_PROVENANCE" | "UNKNOWN_GEOGRAPHY_MISMATCH" };
 export type MarketEvidenceResult = { observations: MarketObservation[]; unknowns: MarketUnknown[]; contradictions: MarketContradiction[]; admissions: MarketAdmission[] };
 
-const acceptedClasses = new Set<MarketSourceClass>(["PUBLIC_REGISTRY", "MARKETPLACE_LISTING", "INDUSTRY_PUBLICATION", "SUPPLIER_DIRECTORY", "OFFICIAL_COMMERCIAL_PAGE"]);
+function isAcceptedMarketSourceClass(sourceClass: MarketSourceClass): sourceClass is AcceptedMarketSourceClass { return sourceClass === "PUBLIC_REGISTRY" || sourceClass === "MARKETPLACE_LISTING" || sourceClass === "INDUSTRY_PUBLICATION" || sourceClass === "SUPPLIER_DIRECTORY" || sourceClass === "OFFICIAL_COMMERCIAL_PAGE"; }
 function normalized(value: string): string { return value.normalize("NFKC").trim().toLowerCase(); }
 function geography(value: string): string { return value.normalize("NFKC").trim().toUpperCase(); }
 function verifiedSourceDomain(source: MarketRawSource): string | null {
@@ -29,7 +30,7 @@ function contradictions(observations: MarketObservation[]): MarketContradiction[
 export async function processMarketSources(sources: MarketRawSource[], store: ImmutableEvidenceStore): Promise<MarketEvidenceResult> {
   const observations: MarketObservation[] = []; const unknowns: MarketUnknown[] = []; const admissions: MarketAdmission[] = [];
   for (const source of sources) {
-    if (!acceptedClasses.has(source.sourceClass)) { unknowns.push(unknown(source, "SOURCE_REJECTED")); admissions.push({ sourceId: source.sourceId, outcome: "REJECTED" }); continue; }
+    if (!isAcceptedMarketSourceClass(source.sourceClass)) { unknowns.push(unknown(source, "SOURCE_REJECTED")); admissions.push({ sourceId: source.sourceId, outcome: "REJECTED" }); continue; }
     const sourceDomain = verifiedSourceDomain(source);
     if (!source.sourceId || !sourceDomain || !source.text.trim() || !source.claimKey.trim()) { unknowns.push(unknown(source, "INSUFFICIENT_PROVENANCE")); admissions.push({ sourceId: source.sourceId, outcome: "UNKNOWN_INSUFFICIENT_PROVENANCE" }); continue; }
     if (geography(source.targetGeography) !== geography(source.observedGeography)) { unknowns.push(unknown(source, "GEOGRAPHY_MISMATCH")); admissions.push({ sourceId: source.sourceId, outcome: "UNKNOWN_GEOGRAPHY_MISMATCH" }); continue; }
