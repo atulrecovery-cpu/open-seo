@@ -18,16 +18,16 @@
 
 ## Direct answers
 
-**A. Dependency:** extreme: DataForSEO underpins most core SEO capabilities.  
-**B. Replace without rewrite:** no; a basic SERP adapter is possible, broad replacement is not.  
-**C. Highest-value vendor capabilities:** keyword metrics, Labs/domain data, backlinks, localized SERP/rank data, and provider AI datasets.  
-**D. Most replaceable:** basic SERP collection and existing native crawling; potentially Lighthouse after a separate feasibility test.  
-**E. OpenSERP:** compatibility is unknown until a verified contract is available; it could only plausibly address basic SERPs.  
-**F. Provider-neutral models:** weak.  
-**G/H/I. Evidence/provenance/replay:** raw evidence partial, provenance weak, conclusions not generally replayable.  
-**J/K. Costs/runaway paths:** DataForSEO rank tracking and Lighthouse crawl fan-out; SAM multi-step turns; AI multi-platform fan-out.  
-**L. Smallest seam:** canonical SERP request/raw-evidence/normalized-observation port ahead of `dataforseo/serp.ts`.  
-**M. Next architecture:** adapters → immutable evidence capture → canonical normalization/provenance → feature logic.  
+**A. Dependency:** extreme: DataForSEO underpins most core SEO capabilities.\
+**B. Replace without rewrite:** no; a basic SERP adapter is possible, broad replacement is not.\
+**C. Highest-value vendor capabilities:** keyword metrics, Labs/domain data, backlinks, localized SERP/rank data, and provider AI datasets.\
+**D. Most replaceable:** basic SERP collection and existing native crawling; potentially Lighthouse after a separate feasibility test.\
+**E. OpenSERP:** compatibility is unknown until a verified contract is available; it could only plausibly address basic SERPs.\
+**F. Provider-neutral models:** weak.\
+**G/H/I. Evidence/provenance/replay:** raw evidence partial, provenance weak, conclusions not generally replayable.\
+**J/K. Costs/runaway paths:** DataForSEO rank tracking and Lighthouse crawl fan-out; SAM multi-step turns; AI multi-platform fan-out.\
+**L. Smallest seam:** canonical SERP request/raw-evidence/normalized-observation port ahead of `dataforseo/serp.ts`.\
+**M. Next architecture:** adapters → immutable evidence capture → canonical normalization/provenance → feature logic.\
 **N. Overall:** BUILD HYBRID PROVIDER LAYER, beginning with an audit-only design of the SERP seam.
 
 ```mermaid

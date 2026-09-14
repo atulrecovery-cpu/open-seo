@@ -1,7 +1,7 @@
 # OpenSEO baseline audit
 
-**Audited source:** `every-app/open-seo`, commit `7b9ee0e4fa800e5bae9ca76f49cb273a9c677204` (`release: v0.1.8 (#604)`).  
-**Audit date:** 2026-09-13.  
+**Audited source:** `every-app/open-seo`, commit `7b9ee0e4fa800e5bae9ca76f49cb273a9c677204` (`release: v0.1.8 (#604)`).\
+**Audit date:** 2026-09-13.\
 **Starting working tree:** clean on `main...origin/main`.
 
 ## 1. Executive summary

@@ -32,6 +32,6 @@ Organic position is **SAFE WITH ADAPTER POLICY** for position semantics: OpenSER
 
 ## DataForSEO boundary
 
-**Candidate only:** basic Google organic acquisition, once a destination URL/domain policy and device strategy are verified.  
-**Keep/likely keep:** keyword volume/CPC/competition, Labs/domain data, backlinks, historical datasets, local business data, Lighthouse and AI Optimization datasets.  
+**Candidate only:** basic Google organic acquisition, once a destination URL/domain policy and device strategy are verified.\
+**Keep/likely keep:** keyword volume/CPC/competition, Labs/domain data, backlinks, historical datasets, local business data, Lighthouse and AI Optimization datasets.\
 **Not decided:** PAA, related searches and full feature taxonomy; source supports feature objects but the bounded runtime observed only AI summary.
