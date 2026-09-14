@@ -1,7 +1,6 @@
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { readFileSync } from "node:fs";
 import { createClient, type Client } from "@libsql/client";
+import type { BatchItem } from "drizzle-orm/batch";
 import { drizzle } from "drizzle-orm/libsql";
 import {
   afterAll,
@@ -12,26 +11,26 @@ import {
   it,
   vi,
 } from "vitest";
-import type { runBatch } from "@/db/runBatch";
 import type * as ServiceModule from "./GoogleAccountService";
 
 vi.mock("cloudflare:workers", () => ({ env: {} }));
 let client: Client;
-const directory = mkdtempSync(join(tmpdir(), "google-account-removal-"));
 let service: typeof ServiceModule.GoogleAccountService;
-type Build = Parameters<typeof runBatch>[0];
 
 beforeAll(async () => {
-  client = createClient({ url: `file:${join(directory, "test.db")}` });
+  client = createClient({ url: "file::memory:" });
   const testDb = drizzle(client);
   vi.doMock("@/db", () => ({ db: testDb }));
   vi.doMock("@/db/runBatch", () => ({
-    runBatch: async (build: Build) => {
-      await testDb.transaction(async (tx) => {
-        // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- real SQLite Drizzle executor has the same query-builder surface
-        for (const statement of build(tx as unknown as Parameters<Build>[0]))
-          await statement;
-      });
+    runBatch: async (
+      build: (
+        tx: typeof testDb,
+      ) => readonly [BatchItem<"sqlite">, ...BatchItem<"sqlite">[]],
+    ) => {
+      // libSQL's transaction() detaches the client's connection. Its batch()
+      // is still atomic, but keeps this in-memory test database available to
+      // the direct setup and assertion queries below.
+      await testDb.batch(build(testDb));
     },
   }));
   await client.executeMultiple(`
@@ -72,7 +71,6 @@ beforeAll(async () => {
 
 afterAll(() => {
   client.close();
-  rmSync(directory, { recursive: true });
 });
 beforeEach(async () => {
   await client.executeMultiple(
