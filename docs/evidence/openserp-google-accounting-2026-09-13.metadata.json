@@ -1,0 +1,30 @@
+{
+  "provider": "openserp",
+  "provider_repository": "https://github.com/karust/openserp.git",
+  "provider_commit": "29c7b0fbe09640160efcfc1f1e04e60e0fbe60e9",
+  "engine": "google",
+  "request_path": "/google/search",
+  "request_parameters": {
+    "text": "best accounting software for small business",
+    "lang": "EN",
+    "region": "US",
+    "limit": "10",
+    "start": "0",
+    "features": "true"
+  },
+  "primary_external_search_request": {
+    "captured_at": "2026-09-13T15:12:22Z",
+    "http_status": 200,
+    "request_id": "01a09b53-9952-7311-914c-d58c4fd3938a",
+    "proxy_mode": "off",
+    "proxy_used": "direct",
+    "cache": "MISS",
+    "browser_profile": "chrome-linux-swiftshader",
+    "network_bytes": 3281674,
+    "organic_result_count": 8,
+    "serp_feature_types": ["ai_summary"],
+    "pagination": { "page": 1, "has_more": false, "next_start": 10 }
+  },
+  "raw_response_sha256_from_local_cache_read": "0cc8d711e0f7781101dead2b31cc895dd4e33974b1af64b46767a555a24eeba3",
+  "note": "The SHA-256 was computed over the complete JSON response returned by a local cache-only replay of the primary request. OpenSERP emits dynamic request metadata on cache replay, so this value is tied to that exact replay response; no credentials were present or captured."
+}
