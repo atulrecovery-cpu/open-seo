@@ -19,8 +19,17 @@ export type ImmutableEvidenceArtifact = RawEvidence & { family: EvidenceFamily; 
 export type ImmutableEvidenceInput = { family: EvidenceFamily; provider: string; requestMetadata: Record<string, unknown>; capturedAt: string; status: number; bytes: Uint8Array; providerVersion: string | null; adapterVersion: string; contentType?: string };
 export interface ImmutableEvidenceStore { captureArtifact(input: ImmutableEvidenceInput): Promise<ImmutableEvidenceArtifact>; }
 
-async function sha256(bytes: Uint8Array): Promise<string> {
-  const digest = await crypto.subtle.digest("SHA-256", bytes);
+function arrayBufferForCrypto(bytes: Uint8Array): ArrayBuffer {
+  const copy = new Uint8Array(bytes.byteLength);
+  copy.set(bytes);
+  return copy.buffer;
+}
+
+export async function sha256Hex(bytes: Uint8Array): Promise<string> {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    arrayBufferForCrypto(bytes),
+  );
   return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
@@ -40,7 +49,7 @@ function safeRequestMetadata(family: EvidenceFamily, metadata: Record<string, un
 /** Content-addressed R2 evidence: an existing key is never overwritten. */
 export function createR2RawEvidenceStore(bucket: R2Bucket): RawEvidenceStore & ImmutableEvidenceStore {
   const captureArtifact: ImmutableEvidenceStore["captureArtifact"] = async (input) => {
-      const digest = await sha256(input.bytes);
+      const digest = await sha256Hex(input.bytes);
       const ref = input.family === "SERP" ? `serp-evidence/${input.provider}/${digest}.json` : `evidence/${input.family.toLowerCase()}/${input.provider}/${digest}.json`;
       const existing = await bucket.head(ref);
       if (!existing) {
