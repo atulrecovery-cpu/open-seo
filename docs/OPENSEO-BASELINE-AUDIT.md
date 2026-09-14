@@ -33,16 +33,16 @@ No credentials were fabricated. Therefore app startup, migration, Docker startup
 
 ### Required configuration and services
 
-| Item | Status / role | Evidence |
-|---|---|---|
-| `DATAFORSEO_API_KEY` | Required for SEO data; base64 `login:password` | `.env.example`, `docs/DATAFORSEO_API_KEY.md` |
-| `AUTH_MODE=local_noauth` | Local trusted mode; Docker forces this mode | `.env.example`, `compose.yaml` |
-| `PORT` | Optional, default 3001 Docker | `.env.example`, `compose.yaml` |
-| D1 | Default database; local migrations use Wrangler | `wrangler.jsonc`, `docs/LOCAL_DEVELOPMENT.md` |
-| Postgres | Optional scaling backend | `docs/LOCAL_POSTGRES.md`, `src/db/pg/**` |
-| `OPENROUTER_API_KEY` | Optional generally; required for SAM | `.env.example`, `src/server/lib/openrouter.ts` |
-| Google OAuth credentials / Better Auth secret | Required only for GSC/GA4 and hosted mode | `.env.example`, `docs/SELF_HOSTING_GOOGLE_*` |
-| Cloudflare Access config | Required for default protected deployment | `.env.example`, `src/lib/auth-mode.ts` |
+| Item                                          | Status / role                                   | Evidence                                       |
+| --------------------------------------------- | ----------------------------------------------- | ---------------------------------------------- |
+| `DATAFORSEO_API_KEY`                          | Required for SEO data; base64 `login:password`  | `.env.example`, `docs/DATAFORSEO_API_KEY.md`   |
+| `AUTH_MODE=local_noauth`                      | Local trusted mode; Docker forces this mode     | `.env.example`, `compose.yaml`                 |
+| `PORT`                                        | Optional, default 3001 Docker                   | `.env.example`, `compose.yaml`                 |
+| D1                                            | Default database; local migrations use Wrangler | `wrangler.jsonc`, `docs/LOCAL_DEVELOPMENT.md`  |
+| Postgres                                      | Optional scaling backend                        | `docs/LOCAL_POSTGRES.md`, `src/db/pg/**`       |
+| `OPENROUTER_API_KEY`                          | Optional generally; required for SAM            | `.env.example`, `src/server/lib/openrouter.ts` |
+| Google OAuth credentials / Better Auth secret | Required only for GSC/GA4 and hosted mode       | `.env.example`, `docs/SELF_HOSTING_GOOGLE_*`   |
+| Cloudflare Access config                      | Required for default protected deployment       | `.env.example`, `src/lib/auth-mode.ts`         |
 
 Deployment paths are Cloudflare/Alchemy (`alchemy.run.ts`, `wrangler.jsonc`) and Docker Compose (`compose.yaml`, `Dockerfile.selfhost`). Production scripts are `deploy`, `deploy:selfhost`, `deploy:postgres`; build is `pnpm build`; preview is `pnpm preview` (`package.json`).
 
@@ -76,17 +76,17 @@ The keyword, SERP, competitor, crawl, GSC/GA4, caching, project context and MCP 
 
 ## 9. Reuse versus replace
 
-| Module | Classification | Reason | Risk | Recommended future action |
-|---|---|---|---|---|
-| UI/routes | EXTEND | Modern functional product surface | UX tied to current workflows | Retain patterns, redesign later only after evidence model. |
-| DataForSEO client | WRAP | Useful mature acquisition seam | Single-vendor data/cost lock-in | Define provider-neutral interfaces and preserve raw responses. |
-| Site audit crawler | EXTEND | Native crawl/issue foundation | Worker limits and URL-fetch risk | Add explicit crawl budgets, replay/provenance and worker isolation. |
-| Rank workflow | EXTEND | Durable scheduling/batch patterns | Provider-specific and cost-sensitive | Keep workflow contract; abstract rank source. |
-| D1/Postgres repositories | KEEP | Dual-backend persistence is useful | Schema duplication drift | Consolidate shared migrations/testing incrementally. |
-| SAM / MCP | WRAP | Useful agent access and tool contracts | Prompt injection, opaque narrative, autonomous paid calls | Put policy, evidence citations and approval gates in front of tools. |
-| AI visibility services | EXTEND | Good provider-mediated baseline | Not direct answer-engine truth; partial geography | Add capture provenance and additional providers. |
-| Billing/telemetry | EXTEND | Existing cost seams | Hosted/vendor assumptions | Adopt budgets/quotas per organization, project, workflow. |
-| SaaS discovery | REPLACE / NEW | Not present | False inference from SEO metrics | Design independently after baseline. |
+| Module                   | Classification | Reason                                 | Risk                                                      | Recommended future action                                            |
+| ------------------------ | -------------- | -------------------------------------- | --------------------------------------------------------- | -------------------------------------------------------------------- |
+| UI/routes                | EXTEND         | Modern functional product surface      | UX tied to current workflows                              | Retain patterns, redesign later only after evidence model.           |
+| DataForSEO client        | WRAP           | Useful mature acquisition seam         | Single-vendor data/cost lock-in                           | Define provider-neutral interfaces and preserve raw responses.       |
+| Site audit crawler       | EXTEND         | Native crawl/issue foundation          | Worker limits and URL-fetch risk                          | Add explicit crawl budgets, replay/provenance and worker isolation.  |
+| Rank workflow            | EXTEND         | Durable scheduling/batch patterns      | Provider-specific and cost-sensitive                      | Keep workflow contract; abstract rank source.                        |
+| D1/Postgres repositories | KEEP           | Dual-backend persistence is useful     | Schema duplication drift                                  | Consolidate shared migrations/testing incrementally.                 |
+| SAM / MCP                | WRAP           | Useful agent access and tool contracts | Prompt injection, opaque narrative, autonomous paid calls | Put policy, evidence citations and approval gates in front of tools. |
+| AI visibility services   | EXTEND         | Good provider-mediated baseline        | Not direct answer-engine truth; partial geography         | Add capture provenance and additional providers.                     |
+| Billing/telemetry        | EXTEND         | Existing cost seams                    | Hosted/vendor assumptions                                 | Adopt budgets/quotas per organization, project, workflow.            |
+| SaaS discovery           | REPLACE / NEW  | Not present                            | False inference from SEO metrics                          | Design independently after baseline.                                 |
 
 ## 10. Security, costs and technical debt
 

@@ -6,23 +6,23 @@ OpenSERP `docs/openapi.yaml` defines `GET /{engine}/search`, engines including G
 
 ## Mapping decision
 
-| Canonical Concept | OpenSEO Requirement | DataForSEO Representation | OpenSERP Representation | Mapping | Evidence |
-|---|---|---|---|---|---|
-| Query | Required | `keyword` | `query.text` / `text` | DIRECT | Source + runtime |
-| Google engine | Required | path `/serp/google/...` | `/google/search`, result `engine` | DIRECT | Source + runtime |
-| Language | Required | `language_code` | `lang` hint / query echo | TRANSFORMABLE | Source + runtime; normalize codes/casing |
-| Region | Required | location code/name | `region` free-text hint | POLICY REQUIRED | Source + runtime; semantics are not identical |
-| Device | Required for rank tracking | `device` desktop/mobile | no device query field | MISSING | Source-verified `Query` fields |
-| Coverage | Required | `depth` 10–100 | `limit` 1–100 and `start` offset | TRANSFORMABLE | Source + runtime |
-| Organic classification | Required | `type: organic` | `type: organic` | DIRECT | Source + runtime |
-| Organic rank | Required | `rank_group`, absolute fallback | `rank`; `position.absolute` | POLICY REQUIRED | Source + runtime; rank is documented type-local, matching intent |
-| URL | Required for match/output | `url` | `url` | LOSSY in tested Google result | Runtime returned Google redirect wrappers |
-| Domain | Required for target-domain matching | `domain` | `domain` | LOSSY in tested Google result | Runtime returned `google.com` |
-| Title/snippet | Enrichment | `title`/`description` | `title`/`snippet` | DIRECT | Source + runtime |
-| Features/PAA/related | Enrichment | item types | `serp_features` | TRANSFORMABLE | Source schema; runtime verified `ai_summary`, not PAA/related |
-| Pagination | Optional today | depth/task semantics | page/has_more/next_start | TRANSFORMABLE | Source + runtime |
-| Provider/timestamp/request ID | Future provenance | provider task metadata | meta + header | DIRECT | Source + runtime |
-| Raw response | Future provenance | only in memory today | direct JSON response | DIRECT | Runtime |
+| Canonical Concept             | OpenSEO Requirement                 | DataForSEO Representation       | OpenSERP Representation           | Mapping                       | Evidence                                                         |
+| ----------------------------- | ----------------------------------- | ------------------------------- | --------------------------------- | ----------------------------- | ---------------------------------------------------------------- |
+| Query                         | Required                            | `keyword`                       | `query.text` / `text`             | DIRECT                        | Source + runtime                                                 |
+| Google engine                 | Required                            | path `/serp/google/...`         | `/google/search`, result `engine` | DIRECT                        | Source + runtime                                                 |
+| Language                      | Required                            | `language_code`                 | `lang` hint / query echo          | TRANSFORMABLE                 | Source + runtime; normalize codes/casing                         |
+| Region                        | Required                            | location code/name              | `region` free-text hint           | POLICY REQUIRED               | Source + runtime; semantics are not identical                    |
+| Device                        | Required for rank tracking          | `device` desktop/mobile         | no device query field             | MISSING                       | Source-verified `Query` fields                                   |
+| Coverage                      | Required                            | `depth` 10–100                  | `limit` 1–100 and `start` offset  | TRANSFORMABLE                 | Source + runtime                                                 |
+| Organic classification        | Required                            | `type: organic`                 | `type: organic`                   | DIRECT                        | Source + runtime                                                 |
+| Organic rank                  | Required                            | `rank_group`, absolute fallback | `rank`; `position.absolute`       | POLICY REQUIRED               | Source + runtime; rank is documented type-local, matching intent |
+| URL                           | Required for match/output           | `url`                           | `url`                             | LOSSY in tested Google result | Runtime returned Google redirect wrappers                        |
+| Domain                        | Required for target-domain matching | `domain`                        | `domain`                          | LOSSY in tested Google result | Runtime returned `google.com`                                    |
+| Title/snippet                 | Enrichment                          | `title`/`description`           | `title`/`snippet`                 | DIRECT                        | Source + runtime                                                 |
+| Features/PAA/related          | Enrichment                          | item types                      | `serp_features`                   | TRANSFORMABLE                 | Source schema; runtime verified `ai_summary`, not PAA/related    |
+| Pagination                    | Optional today                      | depth/task semantics            | page/has_more/next_start          | TRANSFORMABLE                 | Source + runtime                                                 |
+| Provider/timestamp/request ID | Future provenance                   | provider task metadata          | meta + header                     | DIRECT                        | Source + runtime                                                 |
+| Raw response                  | Future provenance                   | only in memory today            | direct JSON response              | DIRECT                        | Runtime                                                          |
 
 ## Localisation and rank decision
 

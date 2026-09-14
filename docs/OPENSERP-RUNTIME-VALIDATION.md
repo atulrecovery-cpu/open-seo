@@ -27,7 +27,12 @@ The returned organic rows have Google redirect URLs (`https://www.google.com/got
 `GET /not-an-engine/search?text=x` returned HTTP 404 JSON:
 
 ```json
-{"error":"not_found","code":404,"request_id":"01a09b54-4bc9-72eb-bf09-1f9eb1ba7039","message":"Cannot GET /not-an-engine/search"}
+{
+  "error": "not_found",
+  "code": 404,
+  "request_id": "01a09b54-4bc9-72eb-bf09-1f9eb1ba7039",
+  "message": "Cannot GET /not-an-engine/search"
+}
 ```
 
 This confirms a machine-readable HTTP error envelope for an invalid route. No blocking/CAPTCHA test was attempted.

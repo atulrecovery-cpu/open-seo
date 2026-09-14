@@ -4,17 +4,17 @@
 
 **Use a hybrid architecture and wrap DataForSEO. Do not replace it wholesale now.** DataForSEO coupling is **EXTREME** at the product level, though operational calls are centralized. A direct replacement would require recreating unrelated commercial datasets and rewriting provider-shaped feature logic.
 
-| Capability | Current | Recommended Future Source | Decision | Reason |
-|---|---|---|---|---|
-| Basic Google SERP retrieval | DataForSEO SERP | DataForSEO adapter plus future self-hosted/commercial SERP adapter | HYBRID | Most plausible first replacement seam; requires equivalent locale/device/rank/features. |
-| Native site crawling | OpenSEO HTTP crawler | Keep native crawler | REPLACE WITH SELF-HOSTED SOURCE | Already application-owned; improve evidence capture, not provider replacement. |
-| Keyword volume/CPC/difficulty | DataForSEO Labs/Google Ads | Keep DataForSEO initially | WRAP DATAFORSEO | Valuable dataset; no verified equivalent supplied. |
-| Domain/competitor dataset | DataForSEO Labs | Keep/wrap | WRAP DATAFORSEO | Depends on vendor corpus and semantics. |
-| Backlinks | DataForSEO Backlinks | Keep/wrap | WRAP DATAFORSEO | Large historical corpus is hard to self-host. |
-| Rank tracking | DataForSEO SERP | Hybrid SERP port | HYBRID | Store canonical snapshots but support alternative acquisition. |
-| Lighthouse | DataForSEO | Evaluate native Lighthouse later | DEFER | Existing output works, but native execution feasibility needs separate validation. |
-| AI visibility | DataForSEO AI Optimization | Keep as optional adapter | WRAP DATAFORSEO | Provider-specific coverage and geography; not evidence of direct engine access. |
-| SAM LLM | OpenRouter | Provider-neutral LLM port later | WRAP DATAFORSEO does not apply | Existing model-builder seam is relatively isolated. |
+| Capability                    | Current                    | Recommended Future Source                                          | Decision                        | Reason                                                                                  |
+| ----------------------------- | -------------------------- | ------------------------------------------------------------------ | ------------------------------- | --------------------------------------------------------------------------------------- |
+| Basic Google SERP retrieval   | DataForSEO SERP            | DataForSEO adapter plus future self-hosted/commercial SERP adapter | HYBRID                          | Most plausible first replacement seam; requires equivalent locale/device/rank/features. |
+| Native site crawling          | OpenSEO HTTP crawler       | Keep native crawler                                                | REPLACE WITH SELF-HOSTED SOURCE | Already application-owned; improve evidence capture, not provider replacement.          |
+| Keyword volume/CPC/difficulty | DataForSEO Labs/Google Ads | Keep DataForSEO initially                                          | WRAP DATAFORSEO                 | Valuable dataset; no verified equivalent supplied.                                      |
+| Domain/competitor dataset     | DataForSEO Labs            | Keep/wrap                                                          | WRAP DATAFORSEO                 | Depends on vendor corpus and semantics.                                                 |
+| Backlinks                     | DataForSEO Backlinks       | Keep/wrap                                                          | WRAP DATAFORSEO                 | Large historical corpus is hard to self-host.                                           |
+| Rank tracking                 | DataForSEO SERP            | Hybrid SERP port                                                   | HYBRID                          | Store canonical snapshots but support alternative acquisition.                          |
+| Lighthouse                    | DataForSEO                 | Evaluate native Lighthouse later                                   | DEFER                           | Existing output works, but native execution feasibility needs separate validation.      |
+| AI visibility                 | DataForSEO AI Optimization | Keep as optional adapter                                           | WRAP DATAFORSEO                 | Provider-specific coverage and geography; not evidence of direct engine access.         |
+| SAM LLM                       | OpenRouter                 | Provider-neutral LLM port later                                    | WRAP DATAFORSEO does not apply  | Existing model-builder seam is relatively isolated.                                     |
 
 ## Direct answers
 

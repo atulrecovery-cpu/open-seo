@@ -6,25 +6,25 @@ OpenSERP source, configuration, API schema and runtime were not accessible in th
 
 ## Replacement scope
 
-| Capability | Finding |
-|---|---|
-| Basic organic SERP retrieval | UNKNOWN |
-| Rank observation | UNKNOWN |
-| People Also Ask | UNKNOWN |
-| Related searches | UNKNOWN |
-| Localized SERPs | UNKNOWN |
-| Device-specific SERPs | UNKNOWN |
-| Search volume / CPC / competition | NO EVIDENCE OF REPLACEMENT; these are separate DataForSEO datasets |
-| Backlinks / historical keyword data / AI visibility | NO EVIDENCE OF REPLACEMENT; outside basic SERP acquisition |
+| Capability                                          | Finding                                                            |
+| --------------------------------------------------- | ------------------------------------------------------------------ |
+| Basic organic SERP retrieval                        | UNKNOWN                                                            |
+| Rank observation                                    | UNKNOWN                                                            |
+| People Also Ask                                     | UNKNOWN                                                            |
+| Related searches                                    | UNKNOWN                                                            |
+| Localized SERPs                                     | UNKNOWN                                                            |
+| Device-specific SERPs                               | UNKNOWN                                                            |
+| Search volume / CPC / competition                   | NO EVIDENCE OF REPLACEMENT; these are separate DataForSEO datasets |
+| Backlinks / historical keyword data / AI visibility | NO EVIDENCE OF REPLACEMENT; outside basic SERP acquisition         |
 
 ## Architecture option assessment
 
-| Option | Vendor independence | Complexity | Reliability/evidence | Decision |
-|---|---|---|---|---|
-| A. DataForSEO only | Low | Low | Known current behavior, weak raw provenance | Current baseline only |
-| B. OpenSERP only | Unknown | Unknown | Cannot assess without contract/runtime | Reject for now |
-| C. Hybrid, OpenSERP basic SERP + DataForSEO proprietary data | Potentially medium | Medium | Conditional on verified parity/operations | Candidate after evidence |
-| D. Multi-provider SERP port | High potential | Higher | Best future isolation, but premature | Defer until one alternative is verified |
+| Option                                                       | Vendor independence | Complexity | Reliability/evidence                        | Decision                                |
+| ------------------------------------------------------------ | ------------------- | ---------- | ------------------------------------------- | --------------------------------------- |
+| A. DataForSEO only                                           | Low                 | Low        | Known current behavior, weak raw provenance | Current baseline only                   |
+| B. OpenSERP only                                             | Unknown             | Unknown    | Cannot assess without contract/runtime      | Reject for now                          |
+| C. Hybrid, OpenSERP basic SERP + DataForSEO proprietary data | Potentially medium  | Medium     | Conditional on verified parity/operations   | Candidate after evidence                |
+| D. Multi-provider SERP port                                  | High potential      | Higher     | Best future isolation, but premature        | Defer until one alternative is verified |
 
 Open-source acquisition is not automatically cheaper or safer: a valid decision must account for CAPTCHA/blocking, proxy/infrastructure cost, parser maintenance, search-engine changes, locale accuracy and availability. None can be evaluated for OpenSERP without its source/runtime contract.
 
