@@ -337,6 +337,13 @@
       "when": 1789380538700,
       "tag": "0047_sour_master_chief",
       "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "6",
+      "when": 1789382425499,
+      "tag": "0048_mighty_captain_cross",
+      "breakpoints": true
     }
   ]
 }

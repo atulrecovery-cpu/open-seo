@@ -257,6 +257,88 @@ export const keywordResearchRunObservations = sqliteTable(
   ],
 );
 
+export const buyerLanguageRuns = sqliteTable(
+  "buyer_language_runs",
+  {
+    id: text("id").primaryKey(),
+    projectId: text("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    language: text("language").notNull(),
+    market: text("market").notNull(),
+    createdAt: text("created_at").notNull(),
+    completedAt: text("completed_at").notNull(),
+  },
+  (table) => [
+    index("buyer_language_runs_project_created_idx").on(
+      table.projectId,
+      table.createdAt,
+    ),
+  ],
+);
+
+export const buyerLanguageObservations = sqliteTable(
+  "buyer_language_observations",
+  {
+    id: text("id").primaryKey(),
+    runId: text("run_id")
+      .notNull()
+      .references(() => buyerLanguageRuns.id, { onDelete: "cascade" }),
+    claimKey: text("claim_key").notNull(),
+    language: text("language").notNull(),
+    market: text("market").notNull(),
+    rawArtifactRef: text("raw_artifact_ref").notNull(),
+    artifactSha256: text("artifact_sha256").notNull(),
+    canonicalObservationJson: text("canonical_observation_json").notNull(),
+    createdAt: text("created_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("buyer_language_observations_run_observation_idx").on(
+      table.runId,
+      table.id,
+    ),
+    index("buyer_language_observations_run_idx").on(table.runId),
+  ],
+);
+
+export const buyerLanguageUnknowns = sqliteTable(
+  "buyer_language_unknowns",
+  {
+    id: text("id").primaryKey(),
+    runId: text("run_id")
+      .notNull()
+      .references(() => buyerLanguageRuns.id, { onDelete: "cascade" }),
+    canonicalUnknownJson: text("canonical_unknown_json").notNull(),
+    createdAt: text("created_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("buyer_language_unknowns_run_unknown_idx").on(
+      table.runId,
+      table.id,
+    ),
+  ],
+);
+
+export const buyerLanguageContradictions = sqliteTable(
+  "buyer_language_contradictions",
+  {
+    id: text("id").primaryKey(),
+    runId: text("run_id")
+      .notNull()
+      .references(() => buyerLanguageRuns.id, { onDelete: "cascade" }),
+    claimKey: text("claim_key").notNull(),
+    canonicalContradictionJson: text("canonical_contradiction_json").notNull(),
+    createdAt: text("created_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("buyer_language_contradictions_run_contradiction_idx").on(
+      table.runId,
+      table.id,
+    ),
+    index("buyer_language_contradictions_run_idx").on(table.runId),
+  ],
+);
+
 // ============================================================================
 // Rank Tracking tables
 // ============================================================================

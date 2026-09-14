@@ -183,6 +183,13 @@
       "when": 1789380551916,
       "tag": "0025_tough_riptide",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1789382427594,
+      "tag": "0026_married_yellowjacket",
+      "breakpoints": true
     }
   ]
 }
