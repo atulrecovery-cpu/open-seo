@@ -8,7 +8,7 @@ export type CorroborationEvidence = { id: string; family: CorroborationFamily; p
 export type CorroborationRecord = { id: string; normalizedPropositionId: string | null; propositionType: CorroborationPropositionType | null; status: CorroborationStatus; supportingEvidenceRefs: string[]; sourceEvidenceFamilies: CorroborationFamily[]; artifactRefs: string[]; shas: string[]; contradictionRefs: string[]; unknownRefs: string[] };
 
 function normalize(value: string): string { return value.normalize("NFKC").trim().toLowerCase(); }
-function unique(values: string[]): string[] { return [...new Set(values)]; }
+function unique<T>(values: T[]): T[] { return [...new Set(values)]; }
 function competitorPropositionType(observation: CompetitorValidationObservation): CorroborationPropositionType {
   switch (observation.claimKind) {
     case "PRICING": return "PRICING_EXISTS";
