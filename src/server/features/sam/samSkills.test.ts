@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { buildSamSkillSource } from "@/server/features/sam/samSkills";
+import {
+  buildSamSkillSource,
+  parseSamSkill,
+} from "@/server/features/sam/samSkills";
 
 describe("buildSamSkillSource", () => {
   // Guards the real failure modes: a skill whose frontmatter breaks (build
@@ -23,5 +26,29 @@ describe("buildSamSkillSource", () => {
 
     const loaded = await source.load("seo-project-setup");
     expect(loaded?.body).toContain("Surface note: you are SAM");
+  });
+});
+
+describe("parseSamSkill", () => {
+  it.each(["\n", "\r\n"])("accepts %j frontmatter line endings", (eol) => {
+    const raw = [
+      "---",
+      "name: example",
+      "description: Example skill",
+      "---",
+      "# Example",
+    ].join(eol);
+
+    expect(parseSamSkill("/skill.md", raw)).toMatchObject({
+      name: "example",
+      description: "Example skill",
+      body: expect.stringContaining("# Example"),
+    });
+  });
+
+  it("rejects malformed frontmatter", () => {
+    expect(() => parseSamSkill("/skill.md", "name: example\n")).toThrow(
+      "Skill has no frontmatter: /skill.md",
+    );
   });
 });

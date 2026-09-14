@@ -1,4 +1,10 @@
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -21,6 +27,22 @@ const script = workflow.jobs.preview.steps.find(
   (step) => step.name === "Verify Access protection",
 )?.run;
 if (!script) throw new Error("Preview Access verification step is missing");
+// Git's Windows checkout preserves CRLF in the YAML block. Bash executes the
+// workflow on GitHub with LF line endings, so give the local Bash harness the
+// same shell input without changing the workflow it verifies.
+const bashScript = script.replace(/\r\n/g, "\n");
+// `bash` resolves to the WSL launcher on many Windows hosts. Use the Git Bash
+// executable when it is available so this test runs the same shell language
+// that GitHub Actions uses instead of attempting to launch an unavailable WSL
+// distribution.
+const gitBash = join(
+  process.env.ProgramFiles ?? "C:\\Program Files",
+  "Git",
+  "bin",
+  "bash.exe",
+);
+const bashCommand =
+  process.platform === "win32" && existsSync(gitBash) ? gitBash : "bash";
 
 const access = "302 https://example.cloudflareaccess.com/cdn-cgi/access/login";
 
@@ -43,14 +65,14 @@ describe("preview Access verification", () => {
       const responseFile = join(directory, "responses");
       writeFileSync(responseFile, responses.join("\n") + "\n");
       const result = spawnSync(
-        "bash",
+        bashCommand,
         [
           "-c",
           // A shared file descriptor advances even inside curl's command substitution.
           `exec 3< "$PREVIEW_RESPONSES"
 curl() { local response; IFS= read -r response <&3 || response="000 "; printf '%s\\n' "$response"; }
 sleep() { :; }
-${script}`,
+${bashScript}`,
         ],
         {
           encoding: "utf8",

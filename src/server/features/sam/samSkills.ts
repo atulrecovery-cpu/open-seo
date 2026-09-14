@@ -33,7 +33,7 @@ const SAM_SURFACE_NOTE = `> Surface note: you are SAM, running inside the OpenSE
 > improvising. Keep SAM's chat voice: a skill's output format is a
 > checklist of what to cover, not a document template to fill.`;
 
-type SamSkill = { name: string; description: string; body: string };
+export type SamSkill = { name: string; description: string; body: string };
 
 const frontmatterSchema = z.looseObject({
   name: z.string().min(1),
@@ -41,8 +41,8 @@ const frontmatterSchema = z.looseObject({
   metadata: z.looseObject({ internal: z.boolean().optional() }).optional(),
 });
 
-function parseSkill(path: string, raw: string): SamSkill | null {
-  const match = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/.exec(raw);
+export function parseSamSkill(path: string, raw: string): SamSkill | null {
+  const match = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n)?([\s\S]*)$/.exec(raw);
   if (!match) throw new Error(`Skill has no frontmatter: ${path}`);
   const parsed = frontmatterSchema.safeParse(parseYaml(match[1]));
   if (!parsed.success) {
@@ -78,7 +78,7 @@ export function buildSamSkillSource(): SkillSource {
   if (cachedSource) return cachedSource;
   const skills = sort(
     Object.entries(skillFiles)
-      .map(([path, raw]) => parseSkill(path, raw))
+      .map(([path, raw]) => parseSamSkill(path, raw))
       .filter((skill): skill is SamSkill => skill !== null),
     (a, b) => a.name.localeCompare(b.name),
   );

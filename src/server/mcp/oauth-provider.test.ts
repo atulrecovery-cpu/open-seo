@@ -1,11 +1,13 @@
 import {
+  AuthorizationError,
   GrantType,
+  OAuthError,
   type OAuthProviderOptions,
   type TokenExchangeCallbackOptions,
 } from "@cloudflare/workers-oauth-provider";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
-import type { createOpenSeoOAuthProvider } from "./oauth-provider";
+import { createOpenSeoOAuthProvider } from "./oauth-provider";
 
 const mocks = vi.hoisted(() => ({
   options: [] as OAuthProviderOptions<unknown>[],
@@ -179,7 +181,6 @@ describe("OpenSEO OAuth provider configuration", () => {
   });
 
   it("binds tokens and protected-resource metadata to the canonical MCP URL", async () => {
-    const { createOpenSeoOAuthProvider } = await import("./oauth-provider");
     const provider = createOpenSeoOAuthProvider(() => new Response("app"));
 
     await dispatch(provider, new Request("https://app.openseo.so/health"));
@@ -198,7 +199,6 @@ describe("OpenSEO OAuth provider configuration", () => {
   });
 
   it("purges OAuth KV data without needing a prior request", async () => {
-    const { createOpenSeoOAuthProvider } = await import("./oauth-provider");
     const provider = createOpenSeoOAuthProvider(() => new Response("app"));
 
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mocked provider does not read its KV-backed environment
@@ -213,8 +213,6 @@ describe("OpenSEO OAuth provider configuration", () => {
   });
 
   it("rejects token exchanges that drop the required MCP scope", async () => {
-    const { OAuthError } = await import("@cloudflare/workers-oauth-provider");
-    const { createOpenSeoOAuthProvider } = await import("./oauth-provider");
     const provider = createOpenSeoOAuthProvider(() => new Response("app"));
 
     await dispatch(provider, new Request("https://app.openseo.so/health"));
@@ -239,7 +237,6 @@ describe("OpenSEO OAuth provider configuration", () => {
   });
 
   it("lets the provider issue Perplexity a real client secret", async () => {
-    const { createOpenSeoOAuthProvider } = await import("./oauth-provider");
     const provider = createOpenSeoOAuthProvider(() => new Response("app"));
 
     await dispatch(
@@ -260,7 +257,6 @@ describe("OpenSEO OAuth provider configuration", () => {
   });
 
   it("includes the authorization-server issuer when consent is denied", async () => {
-    const { createOpenSeoOAuthProvider } = await import("./oauth-provider");
     const provider = createOpenSeoOAuthProvider(() => new Response("app"));
     await dispatch(provider, new Request("https://app.openseo.so/health"));
 
@@ -300,9 +296,6 @@ describe("OpenSEO OAuth provider configuration", () => {
   });
 
   it("redirects safe authorization errors with state and issuer", async () => {
-    const { AuthorizationError } =
-      await import("@cloudflare/workers-oauth-provider");
-    const { createOpenSeoOAuthProvider } = await import("./oauth-provider");
     const provider = createOpenSeoOAuthProvider(() => new Response("app"));
     await dispatch(provider, new Request("https://app.openseo.so/health"));
 
@@ -335,7 +328,6 @@ describe("OpenSEO OAuth provider configuration", () => {
   });
 
   it("does not expose unexpected authorization failures as client errors", async () => {
-    const { createOpenSeoOAuthProvider } = await import("./oauth-provider");
     const provider = createOpenSeoOAuthProvider(() => new Response("app"));
     await dispatch(provider, new Request("https://app.openseo.so/health"));
 
