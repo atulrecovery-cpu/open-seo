@@ -204,6 +204,63 @@ export const keywordMetrics = pgTable(
   ],
 );
 
+// Immutable, project-scoped records of Phase 3A canonical keyword-metric
+// acquisitions. These deliberately do not reuse keyword_metrics, which is a
+// mutable cache for the saved-keyword UI.
+export const keywordResearchRuns = pgTable(
+  "keyword_research_runs",
+  {
+    id: text("id").primaryKey(),
+    projectId: text("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    normalizedQuery: text("normalized_query").notNull(),
+    market: text("market").notNull(),
+    language: text("language").notNull(),
+    provider: text("provider").notNull(),
+    status: text("status").notNull(),
+    failureCode: text("failure_code"),
+    failureArtifactRef: text("failure_artifact_ref"),
+    failureArtifactSha256: text("failure_artifact_sha256"),
+    createdAt: timestampColumn("created_at").notNull(),
+    completedAt: timestampColumn("completed_at"),
+  },
+  (table) => [
+    index("keyword_research_runs_project_created_idx").on(
+      table.projectId,
+      table.createdAt,
+    ),
+  ],
+);
+
+export const keywordResearchRunObservations = pgTable(
+  "keyword_research_run_observations",
+  {
+    id: text("id").primaryKey(),
+    runId: text("run_id")
+      .notNull()
+      .references(() => keywordResearchRuns.id, { onDelete: "cascade" }),
+    canonicalObservationId: text("canonical_observation_id").notNull(),
+    provider: text("provider").notNull(),
+    providerRequestId: text("provider_request_id"),
+    rawArtifactRef: text("raw_artifact_ref").notNull(),
+    artifactSha256: text("artifact_sha256").notNull(),
+    acquiredAt: timestampColumn("acquired_at").notNull(),
+    market: text("market").notNull(),
+    language: text("language").notNull(),
+    demandState: text("demand_state").notNull(),
+    canonicalObservationJson: text("canonical_observation_json").notNull(),
+    createdAt: timestampColumn("created_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("keyword_research_run_observations_run_observation_idx").on(
+      table.runId,
+      table.canonicalObservationId,
+    ),
+    index("keyword_research_run_observations_run_idx").on(table.runId),
+  ],
+);
+
 // ============================================================================
 // Rank Tracking tables
 // ============================================================================
