@@ -19,7 +19,9 @@ describe("keyword-metric evidence integrity", () => {
   it("links a successful canonical observation to the production R2 artifact", async () => {
     const { store, values } = memoryStore(); const payload = { tasks: [{ status_code: 20000, result: [{ keyword: "x", search_volume: 10 }] }] }; const bytes = new TextEncoder().encode(JSON.stringify(payload));
     const result = await acquireDataForSeoKeywordMetrics({ queries: ["x"], language: "en", market: "US" }, { execute: async () => new Response(bytes) }, store);
-    expect(result).toMatchObject({ kind: "SUCCESS" }); expect(result.observations).toHaveLength(1); expect(values.size).toBe(1);
+    expect(result).toMatchObject({ kind: "SUCCESS" });
+    if (result.kind !== "SUCCESS") throw new Error("expected successful acquisition");
+    expect(result.observations).toHaveLength(1); expect(values.size).toBe(1);
     const [ref, stored] = [...values.entries()][0]; const digest = await crypto.subtle.digest("SHA-256", bytes); const sha = Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
     expect(stored.bytes).toEqual(bytes); expect(ref).toContain(sha); expect(result.artifact.sha256).toBe(sha); expect(result.observations[0].evidence).toMatchObject({ family: "KEYWORD_METRIC", rawArtifactRef: ref, sha256: sha });
   });
