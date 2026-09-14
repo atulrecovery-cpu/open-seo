@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DataForSeoKeywordMetricAdapter } from "@/server/lib/keyword-metrics/dataforseo";
 import { languageMappings, marketMappings, metricValue, qualifiesDemand } from "@/server/lib/keyword-metrics/types";
-const evidence = { id: "raw-1", rawArtifactRef: "keyword-metrics/dataforseo/a.json", sha256: "a".repeat(64), captureId: "capture-1" };
+const evidence = { family: "KEYWORD_METRIC" as const, id: "raw-1", rawArtifactRef: "keyword-metrics/dataforseo/a.json", sha256: "a".repeat(64), captureId: "capture-1" };
 const request = { queries: ["best accounting software for small business"], language: "en" as const, market: "US" as const };
 function adapter(row: Record<string, unknown>) { return new DataForSeoKeywordMetricAdapter(async () => ({ rows: [row as { keyword: string }], capturedAt: "2026-09-13T00:00:00.000Z", evidence })); }
 describe("canonical keyword metrics", () => {
